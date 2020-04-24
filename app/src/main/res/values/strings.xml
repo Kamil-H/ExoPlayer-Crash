@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ExoPlayer Crash</string>
+    <string name="player_keep_listening">Keep listening</string>
+    <string name="player_duration_unknown">--:--</string>
+    <string name="player_duration_format">%d:%02d</string>
+    <string name="player_ad_included">Ad included</string>
+</resources>
