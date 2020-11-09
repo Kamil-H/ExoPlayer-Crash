@@ -6,7 +6,9 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.util.Log
 import com.google.android.exoplayer2.Timeline
+import com.nomtek.exoplayercrash.extension.customProperty
 import com.nomtek.exoplayercrash.extension.descriptionTags
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
@@ -72,6 +74,7 @@ class MediaSessionConnection(context: Context) {
         }
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+            Log.i("MediaMetadataCompat", "Custom property in onMetadataChanged callback: ${metadata?.customProperty}")
             nowPlayingChannel.offer(metadata ?: NOTHING_PLAYING)
         }
 

@@ -3,10 +3,12 @@ package com.nomtek.exoplayercrash.media
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.MediaMetadataCompat
+import android.util.Log
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.IllegalSeekPositionException
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
+import com.nomtek.exoplayercrash.extension.customProperty
 import com.nomtek.exoplayercrash.extension.id
 import com.nomtek.exoplayercrash.extension.toMediaSource
 import com.nomtek.exoplayercrash.utils.AdvertisementManager
@@ -22,6 +24,9 @@ class MediaPlayer constructor(
     fun play(list: List<MediaMetadataCompat>, mediaId: String?, playWhenReady: Boolean = true) {
         if (list.isEmpty()) {
             return
+        }
+        list.forEach {
+            Log.i("MediaMetadataCompat", "Custom property just before playback: ${it.customProperty}")
         }
 
         val initialWindowIndex = if (mediaId == null) 0 else list.map { it.id }.indexOf(mediaId)
