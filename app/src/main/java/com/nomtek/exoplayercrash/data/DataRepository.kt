@@ -4,6 +4,7 @@ import com.nomtek.exoplayercrash.models.Advertisement
 import com.nomtek.exoplayercrash.models.MediaItem
 import com.nomtek.exoplayercrash.models.ReportingData
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 class DataRepository(
@@ -16,7 +17,7 @@ class DataRepository(
     suspend fun mediaItems(): List<MediaItem> =
         data ?:
         assetsFileLoader.load(FILE_NAME)?.let {
-            json.parse(MusicData.serializer(), it).music.map { data ->
+            json.decodeFromString<MusicData>(it).music.map { data ->
                 MediaItem(
                     id = data.id,
                     title = data.title,

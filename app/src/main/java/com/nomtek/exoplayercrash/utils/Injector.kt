@@ -17,7 +17,6 @@ import com.nomtek.exoplayercrash.media.MediaSessionConnection
 import com.nomtek.exoplayercrash.media.PlaybackController
 import com.nomtek.exoplayercrash.models.mappers.MediaItemToMediaMetadataCompat
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 
 object Injector {
 
@@ -66,7 +65,7 @@ object Injector {
     private fun provideUserAgent(context: Context) = Util.getUserAgent(context, "APPLICATION_NAME")
 
     private fun dataRepository(context: Context) = DataRepository(
-        json = Json(JsonConfiguration.Stable),
+        json = Json {},
         assetsFileLoader = AssetsFileLoader(context)
     )
 
