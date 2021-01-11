@@ -16,7 +16,7 @@ class DataRepository(
     suspend fun mediaItems(): List<MediaItem> =
         data ?:
         assetsFileLoader.load(FILE_NAME)?.let {
-            json.parse(MusicData.serializer(), it).music.map { data ->
+            json.decodeFromString(MusicData.serializer(), it).music.map { data ->
                 MediaItem(
                     id = data.id,
                     title = data.title,
