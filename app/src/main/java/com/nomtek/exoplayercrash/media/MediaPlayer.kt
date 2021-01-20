@@ -1,39 +1,50 @@
 package com.nomtek.exoplayercrash.media
 
-import android.os.Handler
-import android.os.Looper
-import android.support.v4.media.MediaMetadataCompat
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.IllegalSeekPositionException
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource
-import com.google.android.exoplayer2.upstream.DataSource
-import com.nomtek.exoplayercrash.extension.id
-import com.nomtek.exoplayercrash.extension.toMediaSource
+import com.google.android.exoplayer2.*
 import com.nomtek.exoplayercrash.utils.AdvertisementManager
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class MediaPlayer constructor(
     private val exoPlayer: ExoPlayer,
-    private val httpDataSourceFactory: DataSource.Factory,
     private val advertisementManager: AdvertisementManager
-) {
+) : Player.EventListener {
 
-    private val currentMediaSource: ConcatenatingMediaSource = ConcatenatingMediaSource()
+    val nowPlayingId = MutableStateFlow<String?>(null)
+    val currentItems = MutableStateFlow<List<String>>(emptyList())
 
-    fun play(list: List<MediaMetadataCompat>, mediaId: String?, playWhenReady: Boolean = true) {
+    init {
+        exoPlayer.addListener(this)
+    }
+
+    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+        super.onMediaItemTransition(mediaItem, reason)
+        nowPlayingId.value = mediaItem?.mediaId
+    }
+
+    override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+        super.onTimelineChanged(timeline, reason)
+        val items = mutableListOf<String>()
+        for (index in 0 until exoPlayer.mediaItemCount) {
+            items.add(exoPlayer.getMediaItemAt(index).mediaId)
+        }
+        currentItems.value = items
+    }
+
+    fun play(list: List<MediaItem>, mediaId: String?, playWhenReady: Boolean = true) {
         if (list.isEmpty()) {
             return
         }
 
-        val initialWindowIndex = if (mediaId == null) 0 else list.map { it.id }.indexOf(mediaId)
+        val initialWindowIndex = if (mediaId == null) 0 else list.map { it.mediaId }.indexOf(mediaId)
 
         if (initialWindowIndex == -1) {
             return
         }
 
-        currentMediaSource.clear()
+        exoPlayer.clearMediaItems()
         addAll(list)
         exoPlayer.playWhenReady = playWhenReady
-        exoPlayer.prepare(currentMediaSource)
+        exoPlayer.prepare()
         exoPlayer.seekTo(initialWindowIndex, 0)
     }
 
@@ -45,32 +56,27 @@ class MediaPlayer constructor(
         }
     }
 
-    private fun addAll(list: List<MediaMetadataCompat>) {
-        val mediaSource = list.map { it.toMediaSource(dataSourceFactory()) }
-        currentMediaSource.addMediaSources(mediaSource)
-        advertisementManager.onPlay(list.mapNotNull { it.id })
+    private fun addAll(list: List<MediaItem>) {
+        exoPlayer.addMediaItems(list)
+        advertisementManager.onPlay(list.map { it.mediaId })
     }
 
     fun removeAt(position: Int, onRemoveAction: (Boolean) -> Unit) {
         try {
-            currentMediaSource.removeMediaSource(position, Handler(Looper.getMainLooper())) {
-                onRemoveAction(true)
-            }
+            exoPlayer.removeMediaItem(position)
+            onRemoveAction(true)
         } catch (exception: IndexOutOfBoundsException) {
             exception.printStackTrace()
             onRemoveAction(false)
         }
     }
 
-    fun insert(position: Int, item: MediaMetadataCompat) {
+    fun insert(position: Int, item: MediaItem) {
         try {
-            currentMediaSource.addMediaSource(position, item.toMediaSource(dataSourceFactory()), Handler(Looper.getMainLooper())) {
-                advertisementManager.onInsert(position, item.id!!)
-            }
+            exoPlayer.addMediaItem(position, item)
+            advertisementManager.onInsert(position, item.mediaId)
         } catch (exception: IndexOutOfBoundsException) {
             exception.printStackTrace()
         }
     }
-
-    private fun dataSourceFactory() = httpDataSourceFactory
 }
