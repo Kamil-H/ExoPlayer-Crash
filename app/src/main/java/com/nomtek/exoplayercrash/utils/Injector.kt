@@ -6,15 +6,13 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.upstream.ResolvingDataSource
 import com.google.android.exoplayer2.util.Util
 import com.nomtek.exoplayercrash.MainActivity
 import com.nomtek.exoplayercrash.PlayerViewModel
 import com.nomtek.exoplayercrash.data.AssetsFileLoader
 import com.nomtek.exoplayercrash.data.DataRepository
-import com.nomtek.exoplayercrash.media.MediaPlayer
-import com.nomtek.exoplayercrash.media.MediaService
-import com.nomtek.exoplayercrash.media.MediaSessionConnection
-import com.nomtek.exoplayercrash.media.PlaybackController
+import com.nomtek.exoplayercrash.media.*
 import com.nomtek.exoplayercrash.models.mappers.MediaItemToMediaMetadataCompat
 import kotlinx.serialization.json.Json
 
@@ -60,7 +58,8 @@ object Injector {
         )
     )
 
-    private fun httpDataSourceFactory(context: Context) = DefaultHttpDataSourceFactory(provideUserAgent(context))
+    private fun httpDataSourceFactory(context: Context) =
+        ResolvingDataSource.Factory(DefaultHttpDataSourceFactory(provideUserAgent(context)), CustomResolver())
 
     private fun provideUserAgent(context: Context) = Util.getUserAgent(context, "APPLICATION_NAME")
 

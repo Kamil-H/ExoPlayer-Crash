@@ -21,7 +21,7 @@ class DataRepository(
                     id = data.id,
                     title = data.title,
                     displayTitle = data.artist,
-                    mediaUri = data.source,
+                    mediaUri = "google.com",
                     advertisement = data.adData?.let { adData ->
                         Advertisement(
                             id = adData.id,

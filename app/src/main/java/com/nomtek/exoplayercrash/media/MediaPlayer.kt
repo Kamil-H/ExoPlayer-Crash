@@ -6,14 +6,14 @@ import android.support.v4.media.MediaMetadataCompat
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.IllegalSeekPositionException
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
-import com.google.android.exoplayer2.upstream.HttpDataSource
+import com.google.android.exoplayer2.upstream.DataSource
 import com.nomtek.exoplayercrash.extension.id
 import com.nomtek.exoplayercrash.extension.toMediaSource
 import com.nomtek.exoplayercrash.utils.AdvertisementManager
 
 class MediaPlayer constructor(
     private val exoPlayer: ExoPlayer,
-    private val httpDataSourceFactory: HttpDataSource.Factory,
+    private val httpDataSourceFactory: DataSource.Factory,
     private val advertisementManager: AdvertisementManager
 ) {
 
