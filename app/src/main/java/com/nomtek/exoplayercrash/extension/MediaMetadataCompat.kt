@@ -5,7 +5,7 @@ import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import androidx.core.net.toUri
 import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 
 inline val MediaMetadataCompat.id: String?
@@ -33,7 +33,7 @@ fun MediaMetadataCompat.Builder.putDisplayTitle(value: String): MediaMetadataCom
     putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, value)
 
 fun MediaMetadataCompat.toMediaSource(dataSourceFactory: DataSource.Factory): MediaSource =
-    ProgressiveMediaSource.Factory(dataSourceFactory)
+    HlsMediaSource.Factory(dataSourceFactory)
         .setTag(fullDescription)
         .createMediaSource(getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI).toUri())
 

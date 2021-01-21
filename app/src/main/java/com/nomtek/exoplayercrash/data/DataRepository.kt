@@ -21,7 +21,7 @@ class DataRepository(
                     id = data.id,
                     title = data.title,
                     displayTitle = data.artist,
-                    mediaUri = "google.com",
+                    mediaUri = "https://storageaudiobursts.blob.core.windows.net/stream/4c473e62-524d-4482-b2e6-36983b2fa25e.m3u8",
                     advertisement = data.adData?.let { adData ->
                         Advertisement(
                             id = adData.id,
